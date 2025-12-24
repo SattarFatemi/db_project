@@ -1,0 +1,42 @@
+Customer : customer_id { relationship_status, name, income_level, gender, age, email, phone, vat_exemption_percent }
+Corporate : customer_id { company_name, economic_code }
+Consumer : customer_id { national_id }
+
+Product : product_id { name, category, sub_category, discount, cost_price, sale_price, final_price <<derived>>, profit_margin <<derived>>, vat_exemption_percent }
+
+Order : order_id { processing_status, order_date, processing_priority, total_price <<derived>>, vat_amount <<derived>>, loyalty_discount, customer_id (FK) , processed_by_branch_id (FK), shipment_id (opt FK) }
+
+Shipment : shipment_id { shipping_cost, shipping_date, postal_code, delivery_type, shipping_method, recipient_address, city, region }
+
+Package : package_id { size }
+Box : package_id { }
+Envelope : package_id { type }
+
+Branch : branch_id { total_sales, name, address, phone }
+Manager : manager_id { name }
+
+Supplier : supplier_id { name, contact_number, address }
+
+Wallet : wallet_id { balance, customer_id (FK) }
+WalletTransaction : (wallet_id, transaction_id) { amount, date, type, order_id (opt FK) }
+
+LoyaltyAccount : loyalty_account_id { total_points <<derived>>, credit_limit <<derived>>, unpaid_balance <<derived>>, customer_id (FK unique), tier_level (FK) }
+
+Tier : level { min_score, max_score, order_discount }
+
+OrderProduct : (order_id, product_id) { quantity, final_price_at_order, payment_method, status }
+
+Feedback : (order_id, product_id, feedback_id) { feedback_score, feedback_text, publish_consent }
+FeedbackImage : image_id { order_id, product_id, feedback_id (FK), image_uri }
+
+BranchProductSupplier : (branch_id, product_id, supplier_id) { supply_price, lead_time_days }
+
+ReturnRequest : return_request_id { request_date, return_reason, inspection_result, decision_date, order_id, product_id (FK to OrderProduct) }
+
+Payment : payment_id { status, method, order_id (FK) }
+RepaymentHistory : repayment_id { payment_id (FK), date, amount, payment_method }
+
+BranchOffersProduct : (branch_id, product_id) { discount, cost_price, sale_price }
+BranchManager : (branch_id, manager_id) { }
+ShipmentPackage : (shipment_id, package_id) { }
+PointsEarned : points_earned_id { order_id (FK), loyalty_account_id (FK), points, earned_date }

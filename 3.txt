@@ -1,0 +1,36 @@
+@startchen
+left to right direction
+
+entity Order {
+}
+entity Customer {
+}
+
+entity Wallet {
+    Balance
+    WalletID <<key>>
+}
+
+entity WalletTransaction <<weak>> {
+    TransactionID <<key>>
+    Amount
+    Date
+    Type
+}
+
+relationship HasTransaction <<identifying>> {
+}
+WalletTransaction -N- HasTransaction
+Wallet -1- HasTransaction
+
+relationship Owns {
+}
+Customer -1- Owns
+Wallet -1- Owns
+
+relationship PaysFor {
+}
+Order -1- PaysFor
+WalletTransaction -N- PaysFor
+
+@endchen

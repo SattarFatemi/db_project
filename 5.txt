@@ -1,0 +1,36 @@
+@startchen
+left to right direction
+
+entity Order {
+}
+
+entity Product {
+}
+
+entity OrderProduct <<weak>> {
+    Quantity
+    FinalPriceAtOrder
+    PaymentMethod
+    Status
+}
+
+entity Feedback <<weak>> {
+    FeedbackID <<key>>
+    FeedbackScore
+    FeedbackText
+    FeedbackImages <<multi>>
+    PublishConsent
+}
+
+relationship FeedbackOnOrderProduct <<identifying>> {
+}
+OrderProduct -1- FeedbackOnOrderProduct
+Feedback =N= FeedbackOnOrderProduct
+
+relationship OrderProductRefersTo <<identifying>> {
+}
+Order -1- OrderProductRefersTo
+OrderProduct =1= OrderProductRefersTo
+Product -1- OrderProductRefersTo
+
+@endchen

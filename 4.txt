@@ -1,0 +1,39 @@
+@startchen
+left to right direction
+
+entity Order {
+    LoyaltyDiscount
+}
+entity Customer {
+}
+
+entity LoyaltyAccount {
+    AccountID <<key>>
+    TotalPoints <<derived>>
+}
+
+relationship CustomerHasLoyaltyAccount {
+}
+Customer -1- CustomerHasLoyaltyAccount
+LoyaltyAccount -1- CustomerHasLoyaltyAccount
+
+relationship PointsEarned {
+    Points
+    EarnedDate
+}
+Order -N- PointsEarned
+LoyaltyAccount -1- PointsEarned
+
+entity Tier {
+    Level <<key>>
+    MinScore
+    MaxScore
+    OrderDiscount
+}
+
+relationship LoyaltyAccountHasTier {
+}
+LoyaltyAccount -N- LoyaltyAccountHasTier
+Tier -1- LoyaltyAccountHasTier
+
+@endchen

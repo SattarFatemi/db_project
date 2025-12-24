@@ -1,0 +1,16 @@
+@startchen
+left to right direction
+
+entity Customer {
+    VATExemptionPercent
+}
+
+entity Product {
+    VATExemptionPercent
+}
+
+entity Order {
+    VATAmount <<derived>>
+}
+
+@endchen

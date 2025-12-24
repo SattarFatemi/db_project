@@ -1,0 +1,96 @@
+@startchen
+left to right direction
+
+entity Shipment {
+    ShipmentID <<key>>
+    ShippingCost
+    ShippingDate
+    PostalCode
+    DeliveryType
+    ShippingMethod
+    RecipientAddress
+    City
+    Region
+}
+
+entity Order {
+    OrderID <<key>>
+    ProcessingStatus
+    OrderDate
+    ProcessingPriority
+    TotalPrice <<derived>>
+}
+
+entity Product {
+    ProductID <<key>>
+    Name
+    Category
+    SubCategory
+    Discount
+    CostPrice
+    SalePrice
+    FinalPrice <<derived>>
+    ProfitMargin <<derived>>
+}
+
+entity Customer {
+    CustomerID <<key>>
+    RelationshipStatus
+    Name
+    IncomeLevel
+    Gender
+    Age
+    Email
+    Phone
+}
+
+entity Corporate {
+    CompanyName
+    EconomicCode
+}
+
+entity Consumer {
+    NationalID
+}
+
+Customer ->- d { Corporate, Consumer }
+
+entity Package {
+    PackageID <<key>>
+    Size
+}
+
+entity Box {
+}
+entity Envelope {
+    Type
+}
+
+Package =>= d { Box, Envelope }
+
+relationship OrderContainsProduct {
+    FeedbackScore
+    PaymentMethod
+    Quantity
+    FinalPriceAtOrder
+    Status
+}
+Order -M- OrderContainsProduct
+Product -N- OrderContainsProduct
+
+relationship CustomerHasOrder {
+}
+Order -N- CustomerHasOrder
+Customer -1- CustomerHasOrder
+
+relationship ShippedVia {
+}
+Order -1- ShippedVia
+Shipment -1- ShippedVia
+
+relationship PackedIn {
+}
+Shipment -1- PackedIn
+Package -1- PackedIn
+
+@endchen

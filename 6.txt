@@ -1,0 +1,24 @@
+@startchen
+left to right direction
+
+entity Product {
+}
+entity Branch {
+}
+
+entity Supplier {
+    SupplierID <<key>>
+    Name
+    ContactNumber
+    Address
+}
+
+relationship BranchProductSupplier {
+    SupplyPrice
+    LeadTimeDays
+}
+Branch -M- BranchProductSupplier
+Product -M- BranchProductSupplier
+Supplier -M- BranchProductSupplier
+
+@endchen

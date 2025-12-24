@@ -1,0 +1,267 @@
+@startchen
+left to right direction
+
+entity Shipment {
+    ShipmentID <<key>>
+    ShippingCost
+    ShippingDate
+    PostalCode
+    DeliveryType
+    ShippingMethod
+    RecipientAddress
+    City
+    Region
+}
+
+entity Order {
+    OrderID <<key>>
+    ProcessingStatus
+    OrderDate
+    ProcessingPriority
+    TotalPrice <<derived>>
+    VATAmount <<derived>>
+    LoyaltyDiscount
+}
+
+entity Product {
+    ProductID <<key>>
+    Name
+    Category
+    SubCategory
+    Discount
+    CostPrice
+    SalePrice
+    FinalPrice <<derived>>
+    ProfitMargin <<derived>>
+    VATExemptionPercent
+}
+
+entity Customer {
+    CustomerID <<key>>
+    RelationshipStatus
+    Name
+    IncomeLevel
+    Gender
+    Age
+    Email
+    Phone
+    VATExemptionPercent
+}
+
+entity Corporate {
+    CompanyName
+    EconomicCode
+}
+
+entity Consumer {
+    NationalID
+}
+
+Customer ->- d { Corporate, Consumer }
+
+entity Package {
+    PackageID <<key>>
+    Size
+}
+
+entity Box {
+}
+
+entity Envelope {
+    Type
+}
+
+Package =>= d { Box, Envelope }
+
+relationship OrderContainsProduct {
+    FeedbackScore
+    PaymentMethod
+    Quantity
+    FinalPriceAtOrder
+    Status
+}
+Order -M- OrderContainsProduct
+Product -N- OrderContainsProduct
+
+relationship CustomerHasOrder {
+}
+Order -N- CustomerHasOrder
+Customer -1- CustomerHasOrder
+
+relationship ShippedVia {
+}
+Order -1- ShippedVia
+Shipment -1- ShippedVia
+
+relationship PackedIn {
+}
+Shipment -1- PackedIn
+Package -1- PackedIn
+
+entity Branch {
+    BranchID <<key>>
+    TotalSales
+    Name
+    Address
+    Phone
+}
+
+entity Manager {
+    ManagerID <<key>>
+    Name
+}
+
+relationship Manages {
+}
+Branch -1- Manages
+Manager -N- Manages
+
+relationship Offers {
+    Discount
+    CostPrice
+    SalePrice
+}
+Branch -M- Offers
+Product -N- Offers
+
+relationship ProcessedBy {
+}
+Branch -1- ProcessedBy
+Order -N- ProcessedBy
+
+entity Wallet {
+    Balance
+    WalletID <<key>>
+}
+
+entity WalletTransaction <<weak>> {
+    TransactionID <<key>>
+    Amount
+    Date
+    Type
+}
+
+relationship HasTransaction <<identifying>> {
+}
+WalletTransaction -N- HasTransaction
+Wallet -1- HasTransaction
+
+relationship Owns {
+}
+Customer -1- Owns
+Wallet -1- Owns
+
+relationship PaysFor {
+}
+Order -1- PaysFor
+WalletTransaction -N- PaysFor
+
+entity LoyaltyAccount {
+    AccountID <<key>>
+    TotalPoints <<derived>>
+    CreditLimit <<derived>>
+    UnpaidBalance <<derived>>
+}
+
+relationship CustomerHasLoyaltyAccount {
+}
+Customer -1- CustomerHasLoyaltyAccount
+LoyaltyAccount -1- CustomerHasLoyaltyAccount
+
+relationship PointsEarned {
+    Points
+    EarnedDate
+}
+Order -N- PointsEarned
+LoyaltyAccount -1- PointsEarned
+
+entity Tier {
+    Level <<key>>
+    MinScore
+    MaxScore
+    OrderDiscount
+}
+
+relationship LoyaltyAccountHasTier {
+}
+LoyaltyAccount -N- LoyaltyAccountHasTier
+Tier -1- LoyaltyAccountHasTier
+
+entity OrderProduct <<weak>> {
+    Quantity
+    FinalPriceAtOrder
+    PaymentMethod
+    Status
+}
+
+entity Feedback <<weak>> {
+    FeedbackID <<key>>
+    FeedbackScore
+    FeedbackText
+    FeedbackImages <<multi>>
+    PublishConsent
+}
+
+relationship FeedbackOnOrderProduct <<identifying>> {
+}
+OrderProduct -1- FeedbackOnOrderProduct
+Feedback =N= FeedbackOnOrderProduct
+
+relationship OrderProductRefersTo <<identifying>> {
+}
+Order -1- OrderProductRefersTo
+OrderProduct =1= OrderProductRefersTo
+Product -1- OrderProductRefersTo
+
+entity Supplier {
+    SupplierID <<key>>
+    Name
+    ContactNumber
+    Address
+}
+
+relationship BranchProductSupplier {
+    SupplyPrice
+    LeadTimeDays
+}
+Branch -M- BranchProductSupplier
+Product -M- BranchProductSupplier
+Supplier -M- BranchProductSupplier
+
+entity ReturnRequest {
+    ReturnRequestID <<key>>
+    RequestDate
+    ReturnReason
+    InspectionResult
+    DecisionDate
+}
+
+relationship ReturnOrderProduct {
+}
+OrderProduct -1- ReturnOrderProduct
+ReturnRequest -1- ReturnOrderProduct
+
+entity Payment {
+    PaymentID <<key>>
+    Status
+    Method
+}
+
+entity RepaymentHistory {
+    RepaymentID <<key>>
+    Date
+    Amount
+    PaymentMethod
+}
+
+relationship OrderHasPayment {
+}
+Order -1- OrderHasPayment
+Payment -N- OrderHasPayment
+
+relationship PaymentHasRepaymentHistory {
+}
+Payment -1- PaymentHasRepaymentHistory
+RepaymentHistory -N- PaymentHasRepaymentHistory
+
+@endchen

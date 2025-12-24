@@ -1,0 +1,20 @@
+@startchen
+left to right direction
+
+entity OrderProduct {
+}
+
+entity ReturnRequest {
+    ReturnRequestID <<key>>
+    RequestDate
+    ReturnReason
+    InspectionResult
+    DecisionDate
+}
+
+relationship ReturnOrderProduct {
+}
+OrderProduct -1- ReturnOrderProduct
+ReturnRequest -1- ReturnOrderProduct
+
+@endchen

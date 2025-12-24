@@ -1,0 +1,43 @@
+@startchen
+left to right direction
+
+entity Customer {
+}
+
+entity Order {
+}
+
+entity LoyaltyAccount {
+    CreditLimit <<derived>>
+    UnpaidBalance <<derived>>
+}
+
+entity Payment {
+    PaymentID <<key>>
+    Status
+    Method
+}
+
+entity RepaymentHistory {
+    RepaymentID <<key>>
+    Date
+    Amount
+    PaymentMethod
+}
+
+relationship CustomerHasLoyaltyAccount {
+}
+Customer -1- CustomerHasLoyaltyAccount
+LoyaltyAccount -1- CustomerHasLoyaltyAccount
+
+relationship OrderHasPayment {
+}
+Order -1- OrderHasPayment
+Payment -N- OrderHasPayment
+
+relationship PaymentHasRepaymentHistory {
+}
+Payment -1- PaymentHasRepaymentHistory
+RepaymentHistory -N- PaymentHasRepaymentHistory
+
+@endchen

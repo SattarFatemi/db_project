@@ -1,0 +1,41 @@
+@startchen
+left to right direction
+
+entity Branch {
+    BranchID <<key>>
+    TotalSales
+    Name
+    Address
+    Phone
+}
+
+entity Manager {
+    ManagerID <<key>>
+    Name
+}
+
+entity Product {
+}
+
+entity Order {
+}
+
+relationship Manages {
+}
+Branch -1- Manages
+Manager -N- Manages
+
+relationship Offers {
+    Discount
+    CostPrice
+    SalePrice
+}
+Branch -M- Offers
+Product -N- Offers
+
+relationship ProcessedBy {
+}
+Branch -1- ProcessedBy
+Order -N- ProcessedBy
+
+@endchen

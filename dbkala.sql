@@ -9,6 +9,7 @@ CREATE TYPE order_product_status_enum AS ENUM ('pending', 'delivered', 'pending_
 CREATE TYPE wallet_transaction_type_enum AS ENUM ('deposit', 'payment');
 CREATE TYPE tier_level_enum AS ENUM ('bronze', 'silver', 'gold');
 CREATE TYPE payment_status_enum AS ENUM ('pending', 'completed', 'failed');
+CREATE TYPE customer_type_enum AS ENUM ('corporate', 'consumer');
 
 CREATE TABLE Manager (
     manager_id SERIAL PRIMARY KEY,
@@ -20,25 +21,21 @@ CREATE TABLE Branch (
     name VARCHAR(100) NOT NULL,
     address TEXT,
     phone VARCHAR(20),
-    total_sales NUMERIC(15,2) DEFAULT 0
-);
-
-CREATE TABLE BranchManager (
-    branch_id INT REFERENCES Branch(branch_id),
-    manager_id INT REFERENCES Manager(manager_id),
-    PRIMARY KEY (branch_id, manager_id)
+    total_sales NUMERIC(15,2) DEFAULT 0,
+    manager_id INT NOT NULL REFERENCES Manager(manager_id)
 );
 
 CREATE TABLE Customer (
     customer_id SERIAL PRIMARY KEY,
-    name VARCHAR(100),
+    name VARCHAR(100) NOT NULL,
     age INT,
     gender VARCHAR(10),
     phone VARCHAR(20),
     email VARCHAR(100),
     income_level VARCHAR(50),
     relationship_status VARCHAR(20),
-    vat_exemption_percent NUMERIC(5,2) DEFAULT 0
+    vat_exemption_percent NUMERIC(5,2) DEFAULT 0,
+    customer_type customer_type_enum NOT NULL
 );
 
 CREATE TABLE Corporate (
@@ -143,7 +140,8 @@ CREATE TABLE Envelope (
 CREATE TABLE ShipmentPackage (
     shipment_id INT REFERENCES Shipment(shipment_id),
     package_id INT REFERENCES Package(package_id),
-    PRIMARY KEY (shipment_id, package_id)
+    PRIMARY KEY (shipment_id, package_id),
+    UNIQUE (package_id)
 );
 
 CREATE TABLE "Order" (
@@ -154,7 +152,7 @@ CREATE TABLE "Order" (
     loyalty_discount NUMERIC(5,2) DEFAULT 0,
     customer_id INT NOT NULL REFERENCES Customer(customer_id),
     processed_by_branch_id INT REFERENCES Branch(branch_id),
-    shipment_id INT REFERENCES Shipment(shipment_id)
+    shipment_id INT UNIQUE REFERENCES Shipment(shipment_id)
 );
 
 CREATE TABLE OrderProduct (
@@ -194,15 +192,15 @@ CREATE TABLE WalletTransaction (
 
 CREATE TABLE PointsEarned (
     points_earned_id SERIAL PRIMARY KEY,
-    order_id INT NOT NULL REFERENCES "Order"(order_id),
+    order_id INT NOT NULL UNIQUE REFERENCES "Order"(order_id),
     loyalty_account_id INT NOT NULL REFERENCES LoyaltyAccount(loyalty_account_id),
     points INT NOT NULL,
     earned_date DATE DEFAULT CURRENT_DATE
 );
 
 CREATE TABLE Feedback (
-    order_id INT,
-    product_id INT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
     feedback_id SERIAL,
     feedback_score INT CHECK (feedback_score >= 1 AND feedback_score <= 5),
     feedback_text TEXT,
@@ -213,9 +211,9 @@ CREATE TABLE Feedback (
 
 CREATE TABLE FeedbackImage (
     image_id SERIAL PRIMARY KEY,
-    order_id INT,
-    product_id INT,
-    feedback_id INT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
+    feedback_id INT NOT NULL,
     image_uri TEXT NOT NULL,
     FOREIGN KEY (order_id, product_id, feedback_id) REFERENCES Feedback(order_id, product_id, feedback_id)
 );
@@ -226,7 +224,7 @@ CREATE TABLE ReturnRequest (
     return_reason TEXT,
     inspection_result TEXT,
     decision_date DATE,
-    order_id INT,
-    product_id INT,
+    order_id INT NOT NULL,
+    product_id INT NOT NULL,
     FOREIGN KEY (order_id, product_id) REFERENCES OrderProduct(order_id, product_id)
 );
